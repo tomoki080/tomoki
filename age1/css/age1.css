@@ -1,0 +1,63 @@
+@charset "UTF-8";
+
+header {
+    height: 220px;
+    background-color: rgb(168, 199, 183);
+}
+
+.header {
+    font-size: 30px;
+    background-color: red;
+    position: absolute;
+    top: 30px;
+    left: 8%;
+    border-radius: 30%;
+}
+header p {
+    padding:100px 10px 0px;
+    font-size: 50px;
+    float: right;
+}
+
+.header h1 {
+    color: rgb(58, 8, 8);
+}
+
+.main {
+    width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px 0 0;
+    border-bottom: 1px solid black;
+}
+
+.message {
+    padding: 30px 0;
+}
+
+.in-message {
+    height: 1000px;
+    width: 1000px;
+    margin: 20px auto;
+    text-align: center;
+    border-right: 1px dotted black;
+    border-left: 1px dotted black;
+    border-bottom: 1px dotted rgb(12, 11, 11);
+}
+
+footer {
+    height: 120px;
+    background-color: rgb(187, 187, 230);
+}
+
+.in-footer {
+    padding: 20px 30px 10px;
+}
+
+.footer-left {
+    float: left;
+}
+
+.footer-right {
+    float: right;
+}
