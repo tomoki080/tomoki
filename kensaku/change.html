@@ -1,0 +1,110 @@
+while (true) {
+    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($rec==false) {
+        break;
+    }
+    if ( in_array($rec['play'],$play1) ) {
+        echo $rec['play'];
+    }
+    if ( in_array($rec['done'],$done1) ) {
+        echo $rec['done'];
+    }
+    if ( in_array($rec['play'],$play1) && in_array($rec['done'],$done1) ) {
+        echo $rec['name'];
+        echo $rec['level'];
+        echo $rec['rate'];
+        echo $rec['play'];
+        echo $rec['done'];
+        echo $rec['voice'];
+    }
+
+
+}
+function levelRange($int,$min,$max,$math) {
+    if ( $math<100 ) {
+        $min = 0;
+        $max = $math + 100;
+        return ( $min<$int && $int<$max );
+    } elseif ( 899<$math ) {
+        $max = 999;
+        $min = $math - 100;
+        return ( $min<$int && $int<$max );
+    } else {
+        $min = $math - 100;
+        $max = $math + 100;
+        return ( $min<$int && $int<$max );
+    }
+}
+function rateRange($int,$min,$max,$math) {
+    if ( $math<500 ) {
+        $min = 0;
+        $max = $math + 500;
+        return ( $min<$int && $int<$max );
+    } elseif ( 4500<$math ) {
+        $max = 5000;
+        $min = $math - 500;
+        return ( $min<$int && $int<$max );
+    } else {
+        $min = $math - 500;
+        $max = $math + 500;
+        return ( $min<$int && $int<$max );
+    }
+}
+if($rate){
+    $sql += "rate = {$rate}";
+}
+if($play1) {
+    $sql += "play IN (";
+    foreach( $play1 as $key=>$value ) {
+        $sql += "$value";
+        $sql += isset($play1[$key + 1]) ? ",":"";//if(isset($done[$key+1]) ? ",":;)
+    }
+    $sql += ")";
+}
+if($done1) {
+    $sql += "done IN (";
+    foreach( $done1 as $key=>$value ) {
+        $sql += "$value";
+        $sql += isset($done1[$key + 1]) ? ",":"";//if(isset($done[$key+1]) ? ",":;)
+    }
+    $sql += ")";
+}
+
+if($level){
+    $sql += "level = {$level}";
+}
+if ( isset($rate)) {
+    $sql .= "AND rate = {$rate}";
+} 
+if ( isset($rate)) {
+    if ( $rate < 500 ) {
+        $ratemin = 0;
+        $ratemax = $rate + 500;
+    } elseif ( 4499 < $level ) {
+        $ratemin = $rate - 500;
+        $ratemax = 5000;
+    } else {
+        $ratemin = $rate - 500;
+        $ratemax = $rate + 500;
+    }
+    $sql .= "AND rate BETWEEN {$ratemin} AND {$ratemax} ";
+}
+if( isset($play1) ) {
+    $sql .= "AND play IN (";
+    foreach( $play1 as $key=>$value ) {
+        $sql .= "$value";
+        $sql .= isset($play1[$key + 1]) ? ",":"";//if(isset($play1[$key+1]) ? ",":;)
+    }
+    $sql .= ")";
+}
+if( isset($done1)) {
+    $sql .= "AND done IN (";
+    foreach( $done1 as $key=>$value ) {
+        $sql .= "$value";
+        $sql .= isset($done1[$key + 1]) ? ",":"";//if(isset($done1[$key+1]) ? ",":;)
+    }
+    $sql .= ")";
+}
+if ( isset($voice) ) {
+    $sql .= "AND voice = {$voice} ";
+}

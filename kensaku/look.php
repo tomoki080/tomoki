@@ -11,67 +11,32 @@
             try {
 
                 $voice = $_POST['voice'];
+                $level = $_POST['level'];
+                $rate = $_POST['rate'];
 
-                if ( isset($_POST['level']) ) {
-                    $level = $_POST['level'];
+                if ( $level == "" ) {
+                    $level = null;
+                } 
+                    
+                if ( $rate == "" ) {
+                    $rate = null;
                 }
 
-                if ( isset($_POST['rate']) ) {
-                    $rate = $_POST['rate'];
-                }
-
-                if ( isset($_POST['play']) || is_array($_POST['play']) ) {
+                if ( isset($_POST['play']) && is_array($_POST['play']) ) {
                     $play1 = $_POST['play'];//この変数は配列
+                } elseif (isset($_POST['play'])) {
+                    $paly1 = $_POST['play'];
                 } else {
-                    $play = '';
+                    $play1 = null;
                 }
                 
-                if ( isset($_POST['done']) || is_array($_POST['done']) ) {
+                if ( isset($_POST['done']) && is_array($_POST['done']) ) {
                     $done1 = $_POST['done'];//この変数は配列
+                } elseif ( isset($_POST['done']) ) {
+                    $done1 = $_POST['done'];
                 } else {
-                    $done = '';
+                    $done1 = null;
                 }
-
-                function levelRange($int,$min,$max,$math) {
-                    if ( $math<100 ) {
-                        $min = 0;
-                        $max = $math + 100;
-                        return ( $min<$int && $int<$max );
-                    } elseif ( 899<$math ) {
-                        $max = 999;
-                        $min = $math - 100;
-                        return ( $min<$int && $int<$max );
-                    } else {
-                        $min = $math - 100;
-                        $max = $math + 100;
-                        return ( $min<$int && $int<$max );
-                    }
-                }
-                function rateRange($int,$min,$max,$math) {
-                    if ( $math<500 ) {
-                        $min = 0;
-                        $max = $math + 500;
-                        return ( $min<$int && $int<$max );
-                    } elseif ( 4500<$math ) {
-                        $max = 5000;
-                        $min = $math - 500;
-                        return ( $min<$int && $int<$max );
-                    } else {
-                        $min = $math - 500;
-                        $max = $math + 500;
-                        return ( $min<$int && $int<$max );
-                    }
-                }
-                
-
-
-                
-
-
-
-
-
-
 
                 $dsn='mysql:dbname=kensaku;host=localhost;charset=utf8';
                 $user = 'root';
@@ -79,54 +44,93 @@
                 $dbh = new PDO($dsn, $user, $password);
                 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                $sql = 'SELECT * FROM player WHERE';
-                if($level){
-                    $sql += "level = {$level}";
-                }
-                if($rate){
-                    $sql += "rate = {$rate}";
-                }
-                if($done) {
-                    $sql += "done IN (";
-                    foreach( $done as $key=>$value ) {
-                        $sql += "$value";
-                        $sql += isset($done[$key + 1]) ? ",":"";//if(isset($done[$key+1]) ? ",":;)
+                $sql = 'SELECT * FROM player WHERE ';
+                if( isset($level)) {
+                    if ( $level < 100 ) {
+                        $levelmin = 0;
+                        $levelmax = $level + 100;
+                    } elseif ( 899 < $level ) {
+                        $levelmin = $level - 100;
+                        $levelmax = 999;
+                    } else {
+                        $levelmin = $level - 100;
+                        $levelmax = $level + 100;
                     }
-                    $sql += ")";
+                    $sql .= "level BETWEEN {$levelmin} AND {$levelmax} ";
+                }
+                if ( isset($rate)) {
+                    if ( $rate < 500 ) {
+                        $ratemin = 0;
+                        $ratemax = $rate + 500;
+                    } elseif ( 4499 < $level ) {
+                        $ratemin = $rate - 500;
+                        $ratemax = 5000;
+                    } else {
+                        $ratemin = $rate - 500;
+                        $ratemax = $rate + 500;
+                    }
+                    $sql .= "AND rate BETWEEN {$ratemin} AND {$ratemax} ";
+                }
+                if( isset($play1) ) {
+                    $sql .= "AND play IN (";
+                    foreach( $play1 as $key=>$value ) {
+                        $sql .= "$value";
+                        $sql .= isset($play1[$key + 1]) ? ",":"";//if(isset($play1[$key+1]) ? ",":;)
+                    }
+                    $sql .= ")";
+                }
+                if( isset($done1)) {
+                    $sql .= "AND done IN (";
+                    foreach( $done1 as $key=>$value ) {
+                        $sql .= "$value";
+                        $sql .= isset($done1[$key + 1]) ? ",":"";//if(isset($done1[$key+1]) ? ",":;)
+                    }
+                    $sql .= ")";
+                }
+                if ( $voice == "BOTH" ) {
+                    if ( $level == null && $rate == null && $play1 == null && $done1 == null ) {
+                        $sql .= "voice IN ('YES', 'NO') ";
+                    } else {
+                        $sql .= "AND voice IN ('YES', 'NO')";
+                    }    
+                } else {
+                    if ( $level == null && $rate == null && $play1 == null && $done1 == null ) {
+                        $sql .= "voice = {$voice}";
+                    } else {
+                        $sql .= "AND voice = {$voice}";
+                    }
                 }
                 
-
-
-
-
                 $stmt = $dbh->prepare($sql);
                 $stmt->execute();
 
                 $dbh = null;
 
+                echo '<table border="1" width="1000px">';
+                echo '<tr align="center">';
+                echo '<td>プレイヤーネーム</td>';
+                echo '<td>レベル</td>';
+                echo '<td>レート</td>';
+                echo '<td>プレイタイプ</td>';
+                echo '<td>行動タイプ</td>';
+                echo '<td>ボイスチャット</td>';
+                echo '</tr>';
                 while (true) {
                     $rec = $stmt->fetch(PDO::FETCH_ASSOC);
                     if ($rec==false) {
                         break;
                     }
-                    if ( in_array($rec['play'],$play1) ) {
-                        echo $rec['play'];
-                    }
-                    if ( in_array($rec['done'],$done1) ) {
-                        echo $rec['done'];
-                    }
-                    if ( in_array($rec['play'],$play1) && in_array($rec['done'],$done1) ) {
-                        echo $rec['name'];
-                        echo $rec['level'];
-                        echo $rec['rate'];
-                        echo $rec['play'];
-                        echo $rec['done'];
-                        echo $rec['voice'];
-                    }
-
-
+                    echo '<tr align="center">';
+                    echo '<td>'.$rec['name'].'</td>';
+                    echo '<td>'.$rec['level'].'</td>';
+                    echo '<td>'.$rec['rate'].'</td>';
+                    echo '<td>'.$rec['play'].'</td>';
+                    echo '<td>'.$rec['done'].'</td>';
+                    echo '<td>'.$rec['voice'].'</td>';
+                    echo '<tr>';
                 }
-               
+                echo '</table>';
+
             } catch(Exception $e) {
                 echo 'サーバーに障害が発生しています。';
                 echo 'しばらくお待ちください。';
