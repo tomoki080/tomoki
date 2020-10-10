@@ -144,6 +144,33 @@
                 }     
                   
 
+                // 代替案
+                $show_data = array();
+                while( $rec = $stmt->fetch(PDO::FETCH_ASSOC) )$show_data[] = $rec;
+                if(empty($show_data)){
+                  echo '該当するプレイヤーは存在しません';
+                }else{
+                  echo '<table border="1" width="1000px">';
+                  echo '<tr align="center">';
+                  echo '<td>プレイヤーネーム</td>';
+                  echo '<td>レベル</td>';
+                  echo '<td>レート</td>';
+                  echo '<td>プレイタイプ</td>';
+                  echo '<td>行動タイプ</td>';
+                  echo '<td>ボイスチャット</td>';
+                  echo '</tr>';
+                  foreach($show_data as $assoc_array){
+                    echo '<tr>';
+                    foreach($assoc_array as $v){
+                      echo '<td>';
+                      echo $v;
+                      echo '</td>';
+                    }
+                    echo '</tr>';
+                  }
+                  echo '</table>';
+                }
+
             } catch(Exception $e) {
                 echo 'サーバーに障害が発生しています。';
                 echo 'しばらくお待ちください。';
