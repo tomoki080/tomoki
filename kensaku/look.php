@@ -89,7 +89,7 @@
                 if( isset($done1)) {
                     $sql .= "AND done IN ("; //条件分岐なし
                     foreach($done1 as $key=>$value) {
-                        $sql .= "'{$value}'";　　// 二重で囲むと解決した(なんで)
+                        $sql .= "'{$value}'";// 二重で囲むと解決した(なんで)
                         $sql .= isset($done1[$key + 1]) ? ",":"";//if(isset($done1[$key+1]) ? ",":;)
                     }
                     $sql .= ")";
@@ -110,13 +110,17 @@
                 
                 $stmt = $dbh->prepare($sql);
                 $stmt->execute();
-                //$test_stmt[] = $stmt->fetchAll(); //データが取得されているかの確認
 
                 $dbh = null;
 
-                /*if ( empty($test_stmt[0]) ) {
+                
+                $show_data = array();
+                while ( $rec = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+                    $show_data[] = $rec;
+                }
+                if ( empty($show_data) ) {
                     echo '該当するプレイヤーは存在しません。';
-                } else { */
+                } else {
                     echo '<table border="1" width="1000px">';
                     echo '<tr align="center">';
                     echo '<td>プレイヤーネーム</td>';
@@ -126,22 +130,19 @@
                     echo '<td>行動タイプ</td>';
                     echo '<td>ボイスチャット</td>';
                     echo '</tr>';
-                    while (true) {
-                        $rec = $stmt->fetch(PDO::FETCH_ASSOC);
-                        if ($rec==false) {
-                            break;
-                        }
+                    foreach( $show_data as $vl_array ) {
+                        $cut = array_slice($vl_array,1); //codeカラムをカット
                         echo '<tr align="center">';
-                        echo '<td>'.$rec['name'].'</td>';
-                        echo '<td>'.$rec['level'].'</td>';
-                        echo '<td>'.$rec['rate'].'</td>';
-                        echo '<td>'.$rec['play'].'</td>';
-                        echo '<td>'.$rec['done'].'</td>';
-                        echo '<td>'.$rec['voice'].'</td>';
-                        echo '<tr>';
+                        foreach ( $cut as $value ) {
+                            echo '<td>';
+                            echo $value;
+                            echo '</td>';
+                        }
+                        echo '</tr>';
                     }
                     echo '</table>';
-                //}
+                }     
+                  
 
             } catch(Exception $e) {
                 echo 'サーバーに障害が発生しています。';
