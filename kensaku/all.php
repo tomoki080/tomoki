@@ -32,20 +32,20 @@
                 echo '<td>行動タイプ</td>';
                 echo '<td>ボイスチャット</td>';
                 echo '</tr>';
-                while (true) {
-                    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
-                    if ($rec==false) {
-                        break;
-                    }
+                $show_data[] = array();
+                while ( $rec = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+                    $show_data[] = $rec;
+                }    
+                foreach ( $show_data as $vl_array ) {
+                    $cut = array_slice($vl_array,1);
                     echo '<tr align="center">';
-                    echo '<td>'.$rec['name'].'</td>';
-                    echo '<td>'.$rec['level'].'</td>';
-                    echo '<td>'.$rec['rate'].'</td>';
-                    echo '<td>'.$rec['play'].'</td>';
-                    echo '<td>'.$rec['done'].'</td>';
-                    echo '<td>'.$rec['voice'].'</td>';
-                    echo '<tr>';
-                }
+                    foreach ( $cut as $value ) {
+                        echo '<td>';
+                        echo $value;
+                        echo '</td>';
+                    }
+                    echo '</tr>';
+                }   
                 echo '</table>';
                
             } catch(Exception $e) {
@@ -53,7 +53,8 @@
                 echo 'しばらくお待ちください。';
                 exit();
             }
-
+            
+            echo '<br />';
             echo '<a href="top.html">トップページへ</a>';
 
         ?>

@@ -9,10 +9,11 @@
         <?php
 
             try {
-
-                $voice = $_POST['voice'];
+ 
                 $level = $_POST['level'];
                 $rate = $_POST['rate'];
+                $play = $_POST['play'];
+                $voice = $_POST['voice'];
 
                 if ( $level == "" ) {
                     $level = null;
@@ -22,18 +23,12 @@
                     $rate = null;
                 }
 
-                if ( isset($_POST['play']) ) {
-                    $play = $_POST['play'];
-                } else {
-                    $play = null;
-                }
-
                 if ( isset($_POST['done']) && is_array($_POST['done']) ) {
-                    $done1 = $_POST['done'];//この変数は配列
+                    $done = $_POST['done'];//この変数は配列
                 } elseif ( isset($_POST['done']) ) {
-                    $done1 = $_POST['done'];
+                    $done = $_POST['done'];
                 } else {
-                    $done1 = null;
+                    $done = null;
                 }
 
                 $dsn='mysql:dbname=kensaku;host=localhost;charset=utf8';
@@ -86,26 +81,18 @@
                         $sql .= "AND play = '{$play}' ";
                     }
                 }
-                if( isset($done1)) {
+                if( isset($done)) {
                     $sql .= "AND done IN ("; //条件分岐なし
-                    foreach($done1 as $key=>$value) {
+                    foreach($done as $key=>$value) {
                         $sql .= "'{$value}'";// 二重で囲むと解決した(なんで)
-                        $sql .= isset($done1[$key + 1]) ? ",":"";//if(isset($done1[$key+1]) ? ",":;)
+                        $sql .= isset($done[$key + 1]) ? ",":"";//if(isset($done[$key+1]) ? ",":;)
                     }
                     $sql .= ")";
                 }
                 if ( $voice == "BOTH" ) {
-                    if ( $level == null && $rate == null && $play == null && $done1 == null ) {
-                        $sql .= "voice IN ('YES', 'NO') ";
-                    } else {
-                        $sql .= "AND voice IN ('YES' , 'NO') ";
-                    }    
+                    $sql .= "AND voice IN ('YES' , 'NO') ";   
                 } else {
-                    if ( $level == null && $rate == null && $play == null && $done1 == null ) {
-                        $sql .= "voice = '{$voice}' ";
-                    } else {
-                        $sql .= "AND voice = '{$voice}' ";
-                    }
+                    $sql .= "AND voice = '{$voice}' ";
                 }
                 
                 $stmt = $dbh->prepare($sql);
@@ -113,7 +100,6 @@
 
                 $dbh = null;
 
-                
                 $show_data = array();
                 while ( $rec = $stmt->fetch(PDO::FETCH_ASSOC) ) {
                     $show_data[] = $rec;
@@ -142,34 +128,35 @@
                     }
                     echo '</table>';
                 }     
-                  
 
-                // 代替案
-                $show_data = array();
-                while( $rec = $stmt->fetch(PDO::FETCH_ASSOC) )$show_data[] = $rec;
-                if(empty($show_data)){
-                  echo '該当するプレイヤーは存在しません';
-                }else{
-                  echo '<table border="1" width="1000px">';
-                  echo '<tr align="center">';
-                  echo '<td>プレイヤーネーム</td>';
-                  echo '<td>レベル</td>';
-                  echo '<td>レート</td>';
-                  echo '<td>プレイタイプ</td>';
-                  echo '<td>行動タイプ</td>';
-                  echo '<td>ボイスチャット</td>';
-                  echo '</tr>';
-                  foreach($show_data as $assoc_array){
-                    echo '<tr>';
-                    foreach($assoc_array as $v){
-                      echo '<td>';
-                      echo $v;
-                      echo '</td>';
-                    }
-                    echo '</tr>';
-                  }
-                  echo '</table>';
+                $no = "指定なし<br />";
+                echo '<br />検索条件:<br />';
+                if ( $level == null ) {
+                    echo 'レベル : '.$no;
+                } else {
+                    echo 'レベル : '.$levelmin.'~'.$levelmax.'<br />';
                 }
+                if ( $rate == null ) {
+                    echo 'レート : '.$no;
+                } else {
+                    echo 'レート : '.$ratemin.'~'.$ratemax.'<br />';
+                }     
+                echo 'プレイタイプ : '.$play.'<br />';
+                if ( isset($done) ) {
+                    echo '行動タイプ : ';
+                    foreach ( $done as $key=>$value ) {
+                        echo $value;
+                        if (isset($done[$key+1])) {
+                            echo ', ';
+                        }
+                    }
+                    echo '<br />';
+                } else {
+                    echo '行動タイプ : '.$no;
+                }
+                echo 'ボイスチャット : '.$voice.'<br />';
+                echo '<br />';
+                echo '<a href="top.html">トップメニューへ戻る</a>';
 
             } catch(Exception $e) {
                 echo 'サーバーに障害が発生しています。';
