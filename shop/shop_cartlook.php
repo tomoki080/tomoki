@@ -106,6 +106,8 @@ if ( isset($_SESSION['member_login'])==false ) {
     <?php } ?>
     
     </table>
+    <br />
+    <a href="shop_form.html">ご購入手続きへ進む</a><br />
 
     <input type="hidden" name="max" value="<?php echo $max; ?>">
     <input type="submit" value="数量変更"><br />

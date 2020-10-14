@@ -108,3 +108,63 @@ if( isset($done1)) {
 if ( isset($voice) ) {
     $sql .= "AND voice = {$voice} ";
 }
+
+$namber = rand(0,9999);
+            $name = "player$namber";
+
+            $level = rand(0,999);
+            $rate = rand(0,5000);
+
+            $math_p = rand(1,3);
+            switch ($math_p) {
+                case 1:
+                    $play = "両方";
+                    break;
+                case 2:
+                    $play = "楽しく";
+                    break;
+                case 3:
+                    $play = "本気";
+                    break;
+            }
+
+            $math_d = rand(1,4);
+            switch ($math_d) {
+                case 1:
+                    $done = "前衛で戦う";
+                    break;
+                case 2:
+                    $done = "後衛でサポート";
+                    break;
+                case 3:
+                    $done = "自由に動き回る";
+                    break;
+                case 4:
+                    $done = "指示に従う";
+                    break;
+            }
+
+            $math_v = rand(1,3);
+            switch ($math_v) {
+                case 1:
+                    $voice = "YES";
+                    break;
+                case 2:
+                    $voice = "NO";
+                    break;
+                case 3:
+                    $voice = "BOTH";
+                    break;
+            }
+
+            $sql = 'INSERT INTO '.$table. '(name,level,rate,play,done,voice) VALUES (?,?,?,?,?,?)';
+            $stmt = $dbh->prepare($sql);
+            $data[] = $name;
+            $data[] = $level;
+            $data[] = $rate;
+            $data[] = $play;
+            $data[] = $done;
+            $data[] = $voice;
+            $stmt->execute($data);
+
+            $dbh = null;
