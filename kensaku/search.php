@@ -6,6 +6,10 @@
     </head>
     <body>
 
+        <?php
+        $table = $_GET['table'];
+        ?>
+
         <p>探しているプレイヤーの情報を入力してください。</p>
         <form method="post" action="look.php">
             プレイヤーレベル(検索範囲:前後100):<br />
@@ -26,10 +30,11 @@
             <input type="radio" name="voice" value="NO">ON<br />
             <input type="radio" name="voice" value="BOTH" checked="checked">BOTH<br />
             <br />
+            <input type="hidden" name="table" value=<?php echo $table;?>>
             <input type="submit" value="決定">
         </form>
 
-        <a href="top.html">トップページへ戻る</a>
+        <a href="top.php?table=<?php echo $table;?>">トップページへ戻る</a>
 
     </body>
 </html>

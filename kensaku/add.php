@@ -46,7 +46,7 @@
 
         ?>
 
-        <a href="top.html">トップページに行く。</a>
+        <a href="top.php">トップページに行く。</a>
 
     </body>
 </html>

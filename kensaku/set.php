@@ -10,7 +10,12 @@
 
         try {
 
-            $table = $_POST['table'];
+            if ( isset($_POST['table']) ) {
+                $table = $_POST['table'];
+            }
+            if ( isset($_GET['table']) ) {
+                $table = $_GET['table'];
+            }
             
             $dsn='mysql:dbname=kensaku;host=localhost;charset=utf8';
             $user = 'root';
@@ -72,15 +77,28 @@
 
             $dbh = null;
 
-            echo 'ユーザーの作成が完了しました。<br />';
-            echo '<a href="top.html">トップメニューへ</a><br />';
-            echo 'この画面で、F5でリロードしてください。<br />';
-            echo 'その際、フォームの再送信もしてください。<br />';
-            echo 'PHPでリロードをするとエラーになってしまいます。<br />';
-            echo '手間がかかるとは思いますが、ご容赦ください。<br />';
-            echo 'リロードした回数だけプレイヤーが増えます。<br />';
+            echo 'リロードボタンを押してユーザーの作成を行ってください。<br />';
+            
+            if ( !isset($_POST['count']) ) {
+                $count = 1;
+            } else {   
+                $count = $_POST['count'];
+                $count = $count + 1;
+            }
 
+            echo '<form method="post" action="">';
+            echo '<input type="hidden" name="table" value="'.$table.'">';
+            echo '<input type="hidden" name="count" value="'.$count.'">';
+            echo '<input type="submit" value="リロード">';
+            echo '</form>';
 
+            echo '<br />ユーザーの作成が完了しました。<br />';
+            echo '作成数:';
+            echo $count;
+            echo '...トップから来られた場合、追加した数を示します。';
+            echo '<br /><br />';
+            echo '<a href="top.php?table='.$table.'">トップメニューへ</a><br />';
+           
 
         } catch ( Exception $e ) {
             echo 'サーバーにエラーが生じています。<br />';

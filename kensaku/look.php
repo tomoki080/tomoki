@@ -9,7 +9,8 @@
         <?php
 
             try {
- 
+                
+                $table = $_POST['table'];
                 $level = $_POST['level'];
                 $rate = $_POST['rate'];
                 $play = $_POST['play'];
@@ -37,7 +38,7 @@
                 $dbh = new PDO($dsn, $user, $password);
                 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                $sql = 'SELECT * FROM player WHERE ';
+                $sql = 'SELECT * FROM '.$table.' WHERE ';
                 if( isset($level)) {
                     if ( $level < 100 ) {
                         $levelmin = 0;
@@ -156,7 +157,7 @@
                 }
                 echo 'ボイスチャット : '.$voice.'<br />';
                 echo '<br />';
-                echo '<a href="top.html">トップメニューへ戻る</a>';
+                echo '<a href="top.php?table='.$table.'">トップメニューへ戻る</a>';
 
             } catch(Exception $e) {
                 echo 'サーバーに障害が発生しています。';

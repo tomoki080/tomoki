@@ -10,13 +10,15 @@
 
             try {
 
+                $table = $_GET['table'];
+                
                 $dsn='mysql:dbname=kensaku;host=localhost;charset=utf8';
                 $user = 'root';
                 $password = '';
                 $dbh = new PDO($dsn, $user, $password);
                 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                $sql = 'SELECT * FROM player WHERE 1';
+                $sql = 'SELECT * FROM '.$table.' WHERE 1';
                 $stmt = $dbh->prepare($sql);
                 $stmt->execute();
 
@@ -55,7 +57,7 @@
             }
             
             echo '<br />';
-            echo '<a href="top.html">トップページへ</a>';
+            echo '<a href="top.php?table='.$table.'">トップページへ</a>';
 
         ?>
 
